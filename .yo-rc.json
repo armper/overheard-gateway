@@ -35,7 +35,17 @@
     "entitySuffix": "",
     "dtoSuffix": "DTO",
     "otherModules": [],
-    "blueprints": []
+    "blueprints": [],
+    "appsFolders": ["overheard-gateway"],
+    "directoryPath": "../",
+    "dockerRepositoryName": "gcr.io/the-overheard-club",
+    "dockerPushCommand": "gcloud docker -- push",
+    "kubernetesNamespace": "default",
+    "kubernetesServiceType": "LoadBalancer",
+    "kubernetesUseDynamicStorage": false,
+    "ingressDomain": "",
+    "monitoring": "no",
+    "istio": false
   },
   "git-provider": "GitHub",
   "git-company": "armper",

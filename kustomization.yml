@@ -1,0 +1,13 @@
+commonLabels:
+  app.kubernetes.io/genereted-by: JHipster
+
+resources:
+  # Individual apps
+  - overheardgateway/overheardgateway-deployment.yml
+  - overheardgateway/overheardgateway-service.yml
+  - overheardgateway/overheardgateway-postgresql.yml
+  # service discovery eureka/consul
+  - registry/jhipster-registry.yml
+  - registry/application-configmap.yml
+
+patchesJson6902:

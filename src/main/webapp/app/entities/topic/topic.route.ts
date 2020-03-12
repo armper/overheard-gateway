@@ -4,7 +4,6 @@ import { Resolve, ActivatedRouteSnapshot, Routes, Router } from '@angular/router
 import { Observable, of, EMPTY } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 
-import { Authority } from 'app/shared/constants/authority.constants';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 import { ITopic, Topic } from 'app/shared/model/topic.model';
 import { TopicService } from './topic.service';
@@ -39,7 +38,7 @@ export const topicRoute: Routes = [
     path: '',
     component: TopicComponent,
     data: {
-      authorities: [Authority.USER],
+      authorities: ['ROLE_USER'],
       pageTitle: 'Topics'
     },
     canActivate: [UserRouteAccessService]
@@ -51,7 +50,7 @@ export const topicRoute: Routes = [
       topic: TopicResolve
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: ['ROLE_USER'],
       pageTitle: 'Topics'
     },
     canActivate: [UserRouteAccessService]
@@ -63,7 +62,7 @@ export const topicRoute: Routes = [
       topic: TopicResolve
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: ['ROLE_USER'],
       pageTitle: 'Topics'
     },
     canActivate: [UserRouteAccessService]
@@ -75,7 +74,7 @@ export const topicRoute: Routes = [
       topic: TopicResolve
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: ['ROLE_USER'],
       pageTitle: 'Topics'
     },
     canActivate: [UserRouteAccessService]

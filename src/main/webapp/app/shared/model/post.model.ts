@@ -13,11 +13,10 @@ export interface IPost {
   rankThree?: number;
   rankFour?: number;
   rankFive?: number;
-  rankSix?: number;
-  rankSeven?: number;
   overheardComments?: IOverheardComment[];
   user?: IUser;
   topic?: ITopic;
+  userUpranks?: IUser[];
 }
 
 export class Post implements IPost {
@@ -31,10 +30,9 @@ export class Post implements IPost {
     public rankThree?: number,
     public rankFour?: number,
     public rankFive?: number,
-    public rankSix?: number,
-    public rankSeven?: number,
     public overheardComments?: IOverheardComment[],
     public user?: IUser,
-    public topic?: ITopic
+    public topic?: ITopic,
+    public userUpranks?: IUser[]
   ) {}
 }

@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Overheard Gateway</name>
-
+ 
     <repositories>
         <!-- jhipster-needle-maven-repository -->
     </repositories>
@@ -1186,3 +1186,4 @@
         <!-- jhipster-needle-maven-add-profile -->
     </profiles>
 </project>
+ 

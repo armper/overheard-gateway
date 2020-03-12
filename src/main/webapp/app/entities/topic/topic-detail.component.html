@@ -1,13 +1,11 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <div *ngIf="topic">
-            <h2><span>Topic</span> {{ topic.id }}</h2>
-
-            <hr>
+            <h2>{{ topic.title }}</h2>
 
             <jhi-alert-error></jhi-alert-error>
 
-            <dl class="row-md jh-entity-details">
+            <dl hidden="!isAdmin()" class="row-md jh-entity-details">
                 <dt><span>Title</span></dt>
                 <dd>
                     <span>{{ topic.title }}</span>
@@ -18,16 +16,138 @@
                 </dd>
             </dl>
 
-            <button type="submit"
-                    (click)="previousState()"
-                    class="btn btn-info">
+            <button hidden="!isAdmin()" type="submit" (click)="previousState()" class="btn btn-info">
                 <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
             </button>
 
-            <button type="button"
-                    [routerLink]="['/topic', topic.id, 'edit']"
-                    class="btn btn-primary">
+            <button hidden="!isAdmin()" type="button" [routerLink]="['/topic', topic.id, 'edit']"
+                class="btn btn-primary">
                 <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+            </button>
+
+
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <jhi-alert></jhi-alert>
+            <!-- 
+            <div class="alert alert-warning" id="no-result" *ngIf="posts?.length === 0">
+                <span>No posts found</span>
+            </div>
+
+            <div class="table-responsive" id="entities" *ngIf="posts?.length > 0">
+                <table class="table table-striped" aria-describedby="page-heading">
+                    <thead>
+                        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="reset.bind(this)">
+                            <th scope="col" jhiSortBy="id"><span>ID</span>
+                                <fa-icon icon="sort"></fa-icon>
+                            </th>
+                            <th scope="col" jhiSortBy="title"><span>Title</span>
+                                <fa-icon icon="sort"></fa-icon>
+                            </th>
+                            <th scope="col" jhiSortBy="content"><span>Content</span>
+                                <fa-icon icon="sort"></fa-icon>
+                            </th>
+                            <th scope="col" jhiSortBy="date"><span>Date</span>
+                                <fa-icon icon="sort"></fa-icon>
+                            </th>
+                            <th scope="col" jhiSortBy="rankOne"><span>Rank One</span>
+                                <fa-icon icon="sort"></fa-icon>
+                            </th>
+                            <th scope="col" jhiSortBy="rankTwo"><span>Rank Two</span>
+                                <fa-icon icon="sort"></fa-icon>
+                            </th>
+                            <th scope="col" jhiSortBy="rankThree"><span>Rank Three</span>
+                                <fa-icon icon="sort"></fa-icon>
+                            </th>
+                            <th scope="col" jhiSortBy="rankFour"><span>Rank Four</span>
+                                <fa-icon icon="sort"></fa-icon>
+                            </th>
+                            <th scope="col" jhiSortBy="rankFive"><span>Rank Five</span>
+                                <fa-icon icon="sort"></fa-icon>
+                            </th>
+                            <th scope="col" jhiSortBy="user.id"><span>User</span>
+                                <fa-icon icon="sort"></fa-icon>
+                            </th>
+                            <th scope="col" jhiSortBy="topic.id"><span>Topic</span>
+                                <fa-icon icon="sort"></fa-icon>
+                            </th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody infinite-scroll (scrolled)="loadPage(page + 1)"
+                        [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+                        <tr *ngFor="let post of posts ;trackBy: trackId">
+                            <td><a [routerLink]="['/post', post.id, 'view']">{{ post.id }}</a></td>
+                            <td>{{ post.title }}</td>
+                            <td>{{ post.content }}</td>
+                            <td>{{ post.date | date:'medium' }}</td>
+                            <td>{{ post.rankOne }}</td>
+                            <td>{{ post.rankTwo }}</td>
+                            <td>{{ post.rankThree }}</td>
+                            <td>{{ post.rankFour }}</td>
+                            <td>{{ post.rankFive }}</td>
+                            <td>
+                                {{ post.user?.id }}
+                            </td>
+                            <td>
+                                <div *ngIf="post.topic">
+                                    <a [routerLink]="['/topic', post.topic?.id, 'view']">{{ post.topic?.id }}</a>
+                                </div>
+                            </td>
+                            <td class="text-right">
+                                <div class="btn-group">
+                                    <button type="submit" [routerLink]="['/post', post.id, 'view']"
+                                        class="btn btn-info btn-sm">
+                                        <fa-icon icon="eye"></fa-icon>
+                                        <span class="d-none d-md-inline">View</span>
+                                    </button>
+
+                                    <button type="submit" [routerLink]="['/post', post.id, 'edit']"
+                                        class="btn btn-primary btn-sm">
+                                        <fa-icon icon="pencil-alt"></fa-icon>
+                                        <span class="d-none d-md-inline">Edit</span>
+                                    </button>
+
+                                    <button type="submit" (click)="delete(post)" class="btn btn-danger btn-sm">
+                                        <fa-icon icon="times"></fa-icon>
+                                        <span class="d-none d-md-inline">Delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+ -->
+            <div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']"
+                [infiniteScrollDistance]="0">
+                <ul class="comment" *ngFor="let post of posts">
+                    <hr>
+                    <li>
+                        <span class="rankings">
+                            <span (click)="upRank(post, 1)">👍</span>{{post.rankOne}}
+                            <span (click)="upRank(post, 2)">❤️</span>{{post.rankTwo}}
+                            <span (click)="upRank(post, 3)">😂</span>{{post.rankThree}}
+                            <span (click)="upRank(post, 4)">🤯</span>{{post.rankFour}}
+                            <span (click)="upRank(post, 5)">😠</span>{{post.rankFive}}
+                            <!--    <span (click)="upRank(post, 6)">🙄</span>{{post.rankSix}}
+                        <span (click)="upRank(post, 7)">🤢</span>{{post.rankSeven}} -->
+
+                        </span>
+                        <span class="username">User "{{post.user?.firstName}}" posted: </span>
+                        <h3><a [routerLink]="['/post', post.id, 'view']">{{ post.title }}</a></h3>
+                    </li>
+                </ul>
+            </div>
+
+            <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post"
+                [routerLink]="['/post/new']">
+                <fa-icon icon="plus"></fa-icon>
+                <span>
+                    Post Something
+                </span>
             </button>
         </div>
     </div>

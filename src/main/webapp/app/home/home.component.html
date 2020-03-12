@@ -4,7 +4,7 @@
     </div>
 
     <div class="col-md-9">
-        <h1 class="display-4">Welcome, Java Hipster!</h1>
+        <h1 class="display-4">Welcome to Overheard Club!</h1>
 
         <p class="lead">This is your homepage</p>
 
@@ -15,7 +15,9 @@
 
             <div class="alert alert-warning" *ngSwitchCase="false">
                 <span>If you want to </span>
-                <a class="alert-link" (click)="login()">sign in</a><span>, you can try the default accounts:<br/>- Administrator (login="admin" and password="admin") <br/>- User (login="user" and password="user").</span>
+                <a class="alert-link" (click)="login()">sign in</a><span>, you can try the default accounts:<br />-
+                    Administrator (login="admin" and password="admin") <br />- User (login="user" and
+                    password="user").</span>
             </div>
 
             <div class="alert alert-warning" *ngSwitchCase="false">
@@ -24,20 +26,38 @@
             </div>
         </div>
 
-        <p>
-            If you have any question on JHipster:
-        </p>
+        <h2>Select a Topic</h2>
+        <div class="comment" *ngFor="let topic of topics">
+            <a [routerLink]="['/topic', topic.id, 'view']">{{ topic.title }}</a>
+        </div>
 
-        <ul>
-            <li><a href="https://www.jhipster.tech/" target="_blank" rel="noopener noreferrer">JHipster homepage</a></li>
-            <li><a href="http://stackoverflow.com/tags/jhipster/info" target="_blank" rel="noopener noreferrer">JHipster on Stack Overflow</a></li>
-            <li><a href="https://github.com/jhipster/generator-jhipster/issues?state=open" target="_blank" rel="noopener noreferrer">JHipster bug tracker</a></li>
-            <li><a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer">JHipster public chat room</a></li>
-            <li><a href="https://twitter.com/jhipster" target="_blank" rel="noopener noreferrer">follow @jhipster on Twitter</a></li>
+        <h2>Top posts for today:</h2>
+        <ul class="comment" *ngFor="let post of topFunnyPosts">
+            <hr>
+
+            <li>
+                <span class="rankings">
+                    <span (click)="upRank(post, 1)">👍</span>{{post.rankOne}}
+                    <span (click)="upRank(post, 2)">❤️</span>{{post.rankTwo}}
+                    <span (click)="upRank(post, 3)">😂</span>{{post.rankThree}}
+                    <span (click)="upRank(post, 4)">🤯</span>{{post.rankFour}}
+                    <span (click)="upRank(post, 5)">😠</span>{{post.rankFive}}
+                    <span (click)="upRank(post, 6)">🙄</span>{{post.rankSix}}
+                    <span (click)="upRank(post, 7)">🤢</span>{{post.rankSeven}}
+
+                </span>
+                <span class="username"> User "{{post.user?.firstName}}" posted: </span>
+                <h3><a [routerLink]="['/post', post.id, 'view']">{{ post.title }}</a></h3>
+            </li>
         </ul>
 
-        <p>
-            <span>If you like JHipster, don't forget to give us a star on</span> <a href="https://github.com/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer">GitHub</a>!
-        </p>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post"
+            [routerLink]="['/post/new']">
+            <fa-icon icon="plus"></fa-icon>
+            <span>
+                Post Something
+            </span>
+        </button>
+
     </div>
 </div>
