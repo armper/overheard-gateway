@@ -43,6 +43,11 @@ public class CacheConfiguration {
             createCache(cm, com.perea.overheard.gateway.domain.User.class.getName());
             createCache(cm, com.perea.overheard.gateway.domain.Authority.class.getName());
             createCache(cm, com.perea.overheard.gateway.domain.User.class.getName() + ".authorities");
+            createCache(cm, com.perea.overheard.gateway.domain.OverheardComment.class.getName());
+            createCache(cm, com.perea.overheard.gateway.domain.Post.class.getName());
+            createCache(cm, com.perea.overheard.gateway.domain.Post.class.getName() + ".overheardComments");
+            createCache(cm, com.perea.overheard.gateway.domain.Topic.class.getName());
+            createCache(cm, com.perea.overheard.gateway.domain.Topic.class.getName() + ".posts");
             // jhipster-needle-ehcache-add-entry
         };
     }
