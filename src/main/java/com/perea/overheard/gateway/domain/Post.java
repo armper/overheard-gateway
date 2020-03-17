@@ -57,12 +57,6 @@ public class Post implements Serializable {
     @Column(name = "rank_five")
     private Integer rankFive;
 
-    @Column(name = "rank_six")
-    private Integer rankSix;
-
-    @Column(name = "rank_seven")
-    private Integer rankSeven;
-
     @OneToMany(mappedBy = "post")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<OverheardComment> overheardComments = new HashSet<>();
@@ -71,6 +65,13 @@ public class Post implements Serializable {
     @NotNull
     @JsonIgnoreProperties("posts")
     private User user;
+
+    @ManyToMany
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JoinTable(name = "post_user_uprank",
+               joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "user_uprank_id", referencedColumnName = "id"))
+    private Set<User> userUpranks = new HashSet<>();
 
     @ManyToOne(optional = false)
     @NotNull
@@ -190,32 +191,6 @@ public class Post implements Serializable {
         this.rankFive = rankFive;
     }
 
-    public Integer getRankSix() {
-        return rankSix;
-    }
-
-    public Post rankSix(Integer rankSix) {
-        this.rankSix = rankSix;
-        return this;
-    }
-
-    public void setRankSix(Integer rankSix) {
-        this.rankSix = rankSix;
-    }
-
-    public Integer getRankSeven() {
-        return rankSeven;
-    }
-
-    public Post rankSeven(Integer rankSeven) {
-        this.rankSeven = rankSeven;
-        return this;
-    }
-
-    public void setRankSeven(Integer rankSeven) {
-        this.rankSeven = rankSeven;
-    }
-
     public Set<OverheardComment> getOverheardComments() {
         return overheardComments;
     }
@@ -252,6 +227,29 @@ public class Post implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<User> getUserUpranks() {
+        return userUpranks;
+    }
+
+    public Post userUpranks(Set<User> users) {
+        this.userUpranks = users;
+        return this;
+    }
+
+    public Post addUserUprank(User user) {
+        this.userUpranks.add(user);
+        return this;
+    }
+
+    public Post removeUserUprank(User user) {
+        this.userUpranks.remove(user);
+        return this;
+    }
+
+    public void setUserUpranks(Set<User> users) {
+        this.userUpranks = users;
     }
 
     public Topic getTopic() {
@@ -296,8 +294,6 @@ public class Post implements Serializable {
             ", rankThree=" + getRankThree() +
             ", rankFour=" + getRankFour() +
             ", rankFive=" + getRankFive() +
-            ", rankSix=" + getRankSix() +
-            ", rankSeven=" + getRankSeven() +
             "}";
     }
 }

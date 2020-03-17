@@ -5,7 +5,7 @@
 
             <jhi-alert-error></jhi-alert-error>
 
-            <dl hidden="!isAdmin()" class="row-md jh-entity-details">
+            <dl [hidden]="!isAdmin()" class="row-md jh-entity-details">
                 <dt><span>Title</span></dt>
                 <dd>
                     <span>{{ topic.title }}</span>
@@ -16,11 +16,11 @@
                 </dd>
             </dl>
 
-            <button hidden="!isAdmin()" type="submit" (click)="previousState()" class="btn btn-info">
+            <button [hidden]="!isAdmin()" type="submit" (click)="previousState()" class="btn btn-info">
                 <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
             </button>
 
-            <button hidden="!isAdmin()" type="button" [routerLink]="['/topic', topic.id, 'edit']"
+            <button [hidden]="!isAdmin()" type="button" [routerLink]="['/topic', topic.id, 'edit']"
                 class="btn btn-primary">
                 <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
             </button>

@@ -12,9 +12,14 @@ import com.perea.overheard.gateway.service.PostQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,10 +27,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -33,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for the {@link PostResource} REST controller.
  */
 @SpringBootTest(classes = OverheardGatewayApp.class)
-
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 public class PostResourceIT {
@@ -67,16 +74,14 @@ public class PostResourceIT {
     private static final Integer UPDATED_RANK_FIVE = 2;
     private static final Integer SMALLER_RANK_FIVE = 1 - 1;
 
-    private static final Integer DEFAULT_RANK_SIX = 1;
-    private static final Integer UPDATED_RANK_SIX = 2;
-    private static final Integer SMALLER_RANK_SIX = 1 - 1;
-
-    private static final Integer DEFAULT_RANK_SEVEN = 1;
-    private static final Integer UPDATED_RANK_SEVEN = 2;
-    private static final Integer SMALLER_RANK_SEVEN = 1 - 1;
-
     @Autowired
     private PostRepository postRepository;
+
+    @Mock
+    private PostRepository postRepositoryMock;
+
+    @Mock
+    private PostService postServiceMock;
 
     @Autowired
     private PostService postService;
@@ -107,9 +112,7 @@ public class PostResourceIT {
             .rankTwo(DEFAULT_RANK_TWO)
             .rankThree(DEFAULT_RANK_THREE)
             .rankFour(DEFAULT_RANK_FOUR)
-            .rankFive(DEFAULT_RANK_FIVE)
-            .rankSix(DEFAULT_RANK_SIX)
-            .rankSeven(DEFAULT_RANK_SEVEN);
+            .rankFive(DEFAULT_RANK_FIVE);
         // Add required entity
         User user = UserResourceIT.createEntity(em);
         em.persist(user);
@@ -142,9 +145,7 @@ public class PostResourceIT {
             .rankTwo(UPDATED_RANK_TWO)
             .rankThree(UPDATED_RANK_THREE)
             .rankFour(UPDATED_RANK_FOUR)
-            .rankFive(UPDATED_RANK_FIVE)
-            .rankSix(UPDATED_RANK_SIX)
-            .rankSeven(UPDATED_RANK_SEVEN);
+            .rankFive(UPDATED_RANK_FIVE);
         // Add required entity
         User user = UserResourceIT.createEntity(em);
         em.persist(user);
@@ -191,8 +192,6 @@ public class PostResourceIT {
         assertThat(testPost.getRankThree()).isEqualTo(DEFAULT_RANK_THREE);
         assertThat(testPost.getRankFour()).isEqualTo(DEFAULT_RANK_FOUR);
         assertThat(testPost.getRankFive()).isEqualTo(DEFAULT_RANK_FIVE);
-        assertThat(testPost.getRankSix()).isEqualTo(DEFAULT_RANK_SIX);
-        assertThat(testPost.getRankSeven()).isEqualTo(DEFAULT_RANK_SEVEN);
     }
 
     @Test
@@ -287,11 +286,29 @@ public class PostResourceIT {
             .andExpect(jsonPath("$.[*].rankTwo").value(hasItem(DEFAULT_RANK_TWO)))
             .andExpect(jsonPath("$.[*].rankThree").value(hasItem(DEFAULT_RANK_THREE)))
             .andExpect(jsonPath("$.[*].rankFour").value(hasItem(DEFAULT_RANK_FOUR)))
-            .andExpect(jsonPath("$.[*].rankFive").value(hasItem(DEFAULT_RANK_FIVE)))
-            .andExpect(jsonPath("$.[*].rankSix").value(hasItem(DEFAULT_RANK_SIX)))
-            .andExpect(jsonPath("$.[*].rankSeven").value(hasItem(DEFAULT_RANK_SEVEN)));
+            .andExpect(jsonPath("$.[*].rankFive").value(hasItem(DEFAULT_RANK_FIVE)));
     }
     
+    @SuppressWarnings({"unchecked"})
+    public void getAllPostsWithEagerRelationshipsIsEnabled() throws Exception {
+        when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restPostMockMvc.perform(get("/api/posts?eagerload=true"))
+            .andExpect(status().isOk());
+
+        verify(postServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public void getAllPostsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restPostMockMvc.perform(get("/api/posts?eagerload=true"))
+            .andExpect(status().isOk());
+
+        verify(postServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
     @Test
     @Transactional
     public void getPost() throws Exception {
@@ -310,9 +327,7 @@ public class PostResourceIT {
             .andExpect(jsonPath("$.rankTwo").value(DEFAULT_RANK_TWO))
             .andExpect(jsonPath("$.rankThree").value(DEFAULT_RANK_THREE))
             .andExpect(jsonPath("$.rankFour").value(DEFAULT_RANK_FOUR))
-            .andExpect(jsonPath("$.rankFive").value(DEFAULT_RANK_FIVE))
-            .andExpect(jsonPath("$.rankSix").value(DEFAULT_RANK_SIX))
-            .andExpect(jsonPath("$.rankSeven").value(DEFAULT_RANK_SEVEN));
+            .andExpect(jsonPath("$.rankFive").value(DEFAULT_RANK_FIVE));
     }
 
 
@@ -1070,216 +1085,6 @@ public class PostResourceIT {
 
     @Test
     @Transactional
-    public void getAllPostsByRankSixIsEqualToSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSix equals to DEFAULT_RANK_SIX
-        defaultPostShouldBeFound("rankSix.equals=" + DEFAULT_RANK_SIX);
-
-        // Get all the postList where rankSix equals to UPDATED_RANK_SIX
-        defaultPostShouldNotBeFound("rankSix.equals=" + UPDATED_RANK_SIX);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSixIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSix not equals to DEFAULT_RANK_SIX
-        defaultPostShouldNotBeFound("rankSix.notEquals=" + DEFAULT_RANK_SIX);
-
-        // Get all the postList where rankSix not equals to UPDATED_RANK_SIX
-        defaultPostShouldBeFound("rankSix.notEquals=" + UPDATED_RANK_SIX);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSixIsInShouldWork() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSix in DEFAULT_RANK_SIX or UPDATED_RANK_SIX
-        defaultPostShouldBeFound("rankSix.in=" + DEFAULT_RANK_SIX + "," + UPDATED_RANK_SIX);
-
-        // Get all the postList where rankSix equals to UPDATED_RANK_SIX
-        defaultPostShouldNotBeFound("rankSix.in=" + UPDATED_RANK_SIX);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSixIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSix is not null
-        defaultPostShouldBeFound("rankSix.specified=true");
-
-        // Get all the postList where rankSix is null
-        defaultPostShouldNotBeFound("rankSix.specified=false");
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSixIsGreaterThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSix is greater than or equal to DEFAULT_RANK_SIX
-        defaultPostShouldBeFound("rankSix.greaterThanOrEqual=" + DEFAULT_RANK_SIX);
-
-        // Get all the postList where rankSix is greater than or equal to UPDATED_RANK_SIX
-        defaultPostShouldNotBeFound("rankSix.greaterThanOrEqual=" + UPDATED_RANK_SIX);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSixIsLessThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSix is less than or equal to DEFAULT_RANK_SIX
-        defaultPostShouldBeFound("rankSix.lessThanOrEqual=" + DEFAULT_RANK_SIX);
-
-        // Get all the postList where rankSix is less than or equal to SMALLER_RANK_SIX
-        defaultPostShouldNotBeFound("rankSix.lessThanOrEqual=" + SMALLER_RANK_SIX);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSixIsLessThanSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSix is less than DEFAULT_RANK_SIX
-        defaultPostShouldNotBeFound("rankSix.lessThan=" + DEFAULT_RANK_SIX);
-
-        // Get all the postList where rankSix is less than UPDATED_RANK_SIX
-        defaultPostShouldBeFound("rankSix.lessThan=" + UPDATED_RANK_SIX);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSixIsGreaterThanSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSix is greater than DEFAULT_RANK_SIX
-        defaultPostShouldNotBeFound("rankSix.greaterThan=" + DEFAULT_RANK_SIX);
-
-        // Get all the postList where rankSix is greater than SMALLER_RANK_SIX
-        defaultPostShouldBeFound("rankSix.greaterThan=" + SMALLER_RANK_SIX);
-    }
-
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSevenIsEqualToSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSeven equals to DEFAULT_RANK_SEVEN
-        defaultPostShouldBeFound("rankSeven.equals=" + DEFAULT_RANK_SEVEN);
-
-        // Get all the postList where rankSeven equals to UPDATED_RANK_SEVEN
-        defaultPostShouldNotBeFound("rankSeven.equals=" + UPDATED_RANK_SEVEN);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSevenIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSeven not equals to DEFAULT_RANK_SEVEN
-        defaultPostShouldNotBeFound("rankSeven.notEquals=" + DEFAULT_RANK_SEVEN);
-
-        // Get all the postList where rankSeven not equals to UPDATED_RANK_SEVEN
-        defaultPostShouldBeFound("rankSeven.notEquals=" + UPDATED_RANK_SEVEN);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSevenIsInShouldWork() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSeven in DEFAULT_RANK_SEVEN or UPDATED_RANK_SEVEN
-        defaultPostShouldBeFound("rankSeven.in=" + DEFAULT_RANK_SEVEN + "," + UPDATED_RANK_SEVEN);
-
-        // Get all the postList where rankSeven equals to UPDATED_RANK_SEVEN
-        defaultPostShouldNotBeFound("rankSeven.in=" + UPDATED_RANK_SEVEN);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSevenIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSeven is not null
-        defaultPostShouldBeFound("rankSeven.specified=true");
-
-        // Get all the postList where rankSeven is null
-        defaultPostShouldNotBeFound("rankSeven.specified=false");
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSevenIsGreaterThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSeven is greater than or equal to DEFAULT_RANK_SEVEN
-        defaultPostShouldBeFound("rankSeven.greaterThanOrEqual=" + DEFAULT_RANK_SEVEN);
-
-        // Get all the postList where rankSeven is greater than or equal to UPDATED_RANK_SEVEN
-        defaultPostShouldNotBeFound("rankSeven.greaterThanOrEqual=" + UPDATED_RANK_SEVEN);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSevenIsLessThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSeven is less than or equal to DEFAULT_RANK_SEVEN
-        defaultPostShouldBeFound("rankSeven.lessThanOrEqual=" + DEFAULT_RANK_SEVEN);
-
-        // Get all the postList where rankSeven is less than or equal to SMALLER_RANK_SEVEN
-        defaultPostShouldNotBeFound("rankSeven.lessThanOrEqual=" + SMALLER_RANK_SEVEN);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSevenIsLessThanSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSeven is less than DEFAULT_RANK_SEVEN
-        defaultPostShouldNotBeFound("rankSeven.lessThan=" + DEFAULT_RANK_SEVEN);
-
-        // Get all the postList where rankSeven is less than UPDATED_RANK_SEVEN
-        defaultPostShouldBeFound("rankSeven.lessThan=" + UPDATED_RANK_SEVEN);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPostsByRankSevenIsGreaterThanSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-
-        // Get all the postList where rankSeven is greater than DEFAULT_RANK_SEVEN
-        defaultPostShouldNotBeFound("rankSeven.greaterThan=" + DEFAULT_RANK_SEVEN);
-
-        // Get all the postList where rankSeven is greater than SMALLER_RANK_SEVEN
-        defaultPostShouldBeFound("rankSeven.greaterThan=" + SMALLER_RANK_SEVEN);
-    }
-
-
-    @Test
-    @Transactional
     public void getAllPostsByOverheardCommentIsEqualToSomething() throws Exception {
         // Initialize the database
         postRepository.saveAndFlush(post);
@@ -1316,6 +1121,26 @@ public class PostResourceIT {
 
     @Test
     @Transactional
+    public void getAllPostsByUserUprankIsEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+        User userUprank = UserResourceIT.createEntity(em);
+        em.persist(userUprank);
+        em.flush();
+        post.addUserUprank(userUprank);
+        postRepository.saveAndFlush(post);
+        Long userUprankId = userUprank.getId();
+
+        // Get all the postList where userUprank equals to userUprankId
+        defaultPostShouldBeFound("userUprankId.equals=" + userUprankId);
+
+        // Get all the postList where userUprank equals to userUprankId + 1
+        defaultPostShouldNotBeFound("userUprankId.equals=" + (userUprankId + 1));
+    }
+
+
+    @Test
+    @Transactional
     public void getAllPostsByTopicIsEqualToSomething() throws Exception {
         // Get already existing entity
         Topic topic = post.getTopic();
@@ -1344,9 +1169,7 @@ public class PostResourceIT {
             .andExpect(jsonPath("$.[*].rankTwo").value(hasItem(DEFAULT_RANK_TWO)))
             .andExpect(jsonPath("$.[*].rankThree").value(hasItem(DEFAULT_RANK_THREE)))
             .andExpect(jsonPath("$.[*].rankFour").value(hasItem(DEFAULT_RANK_FOUR)))
-            .andExpect(jsonPath("$.[*].rankFive").value(hasItem(DEFAULT_RANK_FIVE)))
-            .andExpect(jsonPath("$.[*].rankSix").value(hasItem(DEFAULT_RANK_SIX)))
-            .andExpect(jsonPath("$.[*].rankSeven").value(hasItem(DEFAULT_RANK_SEVEN)));
+            .andExpect(jsonPath("$.[*].rankFive").value(hasItem(DEFAULT_RANK_FIVE)));
 
         // Check, that the count call also returns 1
         restPostMockMvc.perform(get("/api/posts/count?sort=id,desc&" + filter))
@@ -1401,9 +1224,7 @@ public class PostResourceIT {
             .rankTwo(UPDATED_RANK_TWO)
             .rankThree(UPDATED_RANK_THREE)
             .rankFour(UPDATED_RANK_FOUR)
-            .rankFive(UPDATED_RANK_FIVE)
-            .rankSix(UPDATED_RANK_SIX)
-            .rankSeven(UPDATED_RANK_SEVEN);
+            .rankFive(UPDATED_RANK_FIVE);
 
         restPostMockMvc.perform(put("/api/posts")
             .contentType(MediaType.APPLICATION_JSON)
@@ -1422,8 +1243,6 @@ public class PostResourceIT {
         assertThat(testPost.getRankThree()).isEqualTo(UPDATED_RANK_THREE);
         assertThat(testPost.getRankFour()).isEqualTo(UPDATED_RANK_FOUR);
         assertThat(testPost.getRankFive()).isEqualTo(UPDATED_RANK_FIVE);
-        assertThat(testPost.getRankSix()).isEqualTo(UPDATED_RANK_SIX);
-        assertThat(testPost.getRankSeven()).isEqualTo(UPDATED_RANK_SEVEN);
     }
 
     @Test

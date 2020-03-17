@@ -48,6 +48,7 @@ public class CacheConfiguration {
             createCache(cm, com.perea.overheard.gateway.domain.Post.class.getName() + ".overheardComments");
             createCache(cm, com.perea.overheard.gateway.domain.Topic.class.getName());
             createCache(cm, com.perea.overheard.gateway.domain.Topic.class.getName() + ".posts");
+            createCache(cm, com.perea.overheard.gateway.domain.Post.class.getName() + ".userUpranks");
             // jhipster-needle-ehcache-add-entry
         };
     }

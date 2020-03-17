@@ -37,10 +37,9 @@ export class PostUpdatePage {
   rankThreeInput = element(by.id('field_rankThree'));
   rankFourInput = element(by.id('field_rankFour'));
   rankFiveInput = element(by.id('field_rankFive'));
-  rankSixInput = element(by.id('field_rankSix'));
-  rankSevenInput = element(by.id('field_rankSeven'));
 
   userSelect = element(by.id('field_user'));
+  userUprankSelect = element(by.id('field_userUprank'));
   topicSelect = element(by.id('field_topic'));
 
   async getPageTitle(): Promise<string> {
@@ -111,22 +110,6 @@ export class PostUpdatePage {
     return await this.rankFiveInput.getAttribute('value');
   }
 
-  async setRankSixInput(rankSix: string): Promise<void> {
-    await this.rankSixInput.sendKeys(rankSix);
-  }
-
-  async getRankSixInput(): Promise<string> {
-    return await this.rankSixInput.getAttribute('value');
-  }
-
-  async setRankSevenInput(rankSeven: string): Promise<void> {
-    await this.rankSevenInput.sendKeys(rankSeven);
-  }
-
-  async getRankSevenInput(): Promise<string> {
-    return await this.rankSevenInput.getAttribute('value');
-  }
-
   async userSelectLastOption(): Promise<void> {
     await this.userSelect
       .all(by.tagName('option'))
@@ -144,6 +127,25 @@ export class PostUpdatePage {
 
   async getUserSelectedOption(): Promise<string> {
     return await this.userSelect.element(by.css('option:checked')).getText();
+  }
+
+  async userUprankSelectLastOption(): Promise<void> {
+    await this.userUprankSelect
+      .all(by.tagName('option'))
+      .last()
+      .click();
+  }
+
+  async userUprankSelectOption(option: string): Promise<void> {
+    await this.userUprankSelect.sendKeys(option);
+  }
+
+  getUserUprankSelect(): ElementFinder {
+    return this.userUprankSelect;
+  }
+
+  async getUserUprankSelectedOption(): Promise<string> {
+    return await this.userUprankSelect.element(by.css('option:checked')).getText();
   }
 
   async topicSelectLastOption(): Promise<void> {

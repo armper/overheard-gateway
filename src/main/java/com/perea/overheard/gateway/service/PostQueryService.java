@@ -109,12 +109,6 @@ public class PostQueryService extends QueryService<Post> {
             if (criteria.getRankFive() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getRankFive(), Post_.rankFive));
             }
-            if (criteria.getRankSix() != null) {
-                specification = specification.and(buildRangeSpecification(criteria.getRankSix(), Post_.rankSix));
-            }
-            if (criteria.getRankSeven() != null) {
-                specification = specification.and(buildRangeSpecification(criteria.getRankSeven(), Post_.rankSeven));
-            }
             if (criteria.getOverheardCommentId() != null) {
                 specification = specification.and(buildSpecification(criteria.getOverheardCommentId(),
                     root -> root.join(Post_.overheardComments, JoinType.LEFT).get(OverheardComment_.id)));
@@ -122,6 +116,10 @@ public class PostQueryService extends QueryService<Post> {
             if (criteria.getUserId() != null) {
                 specification = specification.and(buildSpecification(criteria.getUserId(),
                     root -> root.join(Post_.user, JoinType.LEFT).get(User_.id)));
+            }
+            if (criteria.getUserUprankId() != null) {
+                specification = specification.and(buildSpecification(criteria.getUserUprankId(),
+                    root -> root.join(Post_.userUpranks, JoinType.LEFT).get(User_.id)));
             }
             if (criteria.getTopicId() != null) {
                 specification = specification.and(buildSpecification(criteria.getTopicId(),

@@ -43,13 +43,11 @@ public class PostCriteria implements Serializable, Criteria {
 
     private IntegerFilter rankFive;
 
-    private IntegerFilter rankSix;
-
-    private IntegerFilter rankSeven;
-
     private LongFilter overheardCommentId;
 
     private LongFilter userId;
+
+    private LongFilter userUprankId;
 
     private LongFilter topicId;
 
@@ -66,10 +64,9 @@ public class PostCriteria implements Serializable, Criteria {
         this.rankThree = other.rankThree == null ? null : other.rankThree.copy();
         this.rankFour = other.rankFour == null ? null : other.rankFour.copy();
         this.rankFive = other.rankFive == null ? null : other.rankFive.copy();
-        this.rankSix = other.rankSix == null ? null : other.rankSix.copy();
-        this.rankSeven = other.rankSeven == null ? null : other.rankSeven.copy();
         this.overheardCommentId = other.overheardCommentId == null ? null : other.overheardCommentId.copy();
         this.userId = other.userId == null ? null : other.userId.copy();
+        this.userUprankId = other.userUprankId == null ? null : other.userUprankId.copy();
         this.topicId = other.topicId == null ? null : other.topicId.copy();
     }
 
@@ -150,22 +147,6 @@ public class PostCriteria implements Serializable, Criteria {
         this.rankFive = rankFive;
     }
 
-    public IntegerFilter getRankSix() {
-        return rankSix;
-    }
-
-    public void setRankSix(IntegerFilter rankSix) {
-        this.rankSix = rankSix;
-    }
-
-    public IntegerFilter getRankSeven() {
-        return rankSeven;
-    }
-
-    public void setRankSeven(IntegerFilter rankSeven) {
-        this.rankSeven = rankSeven;
-    }
-
     public LongFilter getOverheardCommentId() {
         return overheardCommentId;
     }
@@ -180,6 +161,14 @@ public class PostCriteria implements Serializable, Criteria {
 
     public void setUserId(LongFilter userId) {
         this.userId = userId;
+    }
+
+    public LongFilter getUserUprankId() {
+        return userUprankId;
+    }
+
+    public void setUserUprankId(LongFilter userUprankId) {
+        this.userUprankId = userUprankId;
     }
 
     public LongFilter getTopicId() {
@@ -210,10 +199,9 @@ public class PostCriteria implements Serializable, Criteria {
             Objects.equals(rankThree, that.rankThree) &&
             Objects.equals(rankFour, that.rankFour) &&
             Objects.equals(rankFive, that.rankFive) &&
-            Objects.equals(rankSix, that.rankSix) &&
-            Objects.equals(rankSeven, that.rankSeven) &&
             Objects.equals(overheardCommentId, that.overheardCommentId) &&
             Objects.equals(userId, that.userId) &&
+            Objects.equals(userUprankId, that.userUprankId) &&
             Objects.equals(topicId, that.topicId);
     }
 
@@ -229,10 +217,9 @@ public class PostCriteria implements Serializable, Criteria {
         rankThree,
         rankFour,
         rankFive,
-        rankSix,
-        rankSeven,
         overheardCommentId,
         userId,
+        userUprankId,
         topicId
         );
     }
@@ -249,10 +236,9 @@ public class PostCriteria implements Serializable, Criteria {
                 (rankThree != null ? "rankThree=" + rankThree + ", " : "") +
                 (rankFour != null ? "rankFour=" + rankFour + ", " : "") +
                 (rankFive != null ? "rankFive=" + rankFive + ", " : "") +
-                (rankSix != null ? "rankSix=" + rankSix + ", " : "") +
-                (rankSeven != null ? "rankSeven=" + rankSeven + ", " : "") +
                 (overheardCommentId != null ? "overheardCommentId=" + overheardCommentId + ", " : "") +
                 (userId != null ? "userId=" + userId + ", " : "") +
+                (userUprankId != null ? "userUprankId=" + userUprankId + ", " : "") +
                 (topicId != null ? "topicId=" + topicId + ", " : "") +
             "}";
     }

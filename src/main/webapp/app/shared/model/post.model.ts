@@ -15,8 +15,8 @@ export interface IPost {
   rankFive?: number;
   overheardComments?: IOverheardComment[];
   user?: IUser;
-  topic?: ITopic;
   userUpranks?: IUser[];
+  topic?: ITopic;
 }
 
 export class Post implements IPost {
@@ -32,7 +32,7 @@ export class Post implements IPost {
     public rankFive?: number,
     public overheardComments?: IOverheardComment[],
     public user?: IUser,
-    public topic?: ITopic,
-    public userUpranks?: IUser[]
+    public userUpranks?: IUser[],
+    public topic?: ITopic
   ) {}
 }

@@ -53,9 +53,8 @@ describe('Post e2e test', () => {
             postUpdatePage.setRankThreeInput('5'),
             postUpdatePage.setRankFourInput('5'),
             postUpdatePage.setRankFiveInput('5'),
-            postUpdatePage.setRankSixInput('5'),
-            postUpdatePage.setRankSevenInput('5'),
             postUpdatePage.userSelectLastOption(),
+            // postUpdatePage.userUprankSelectLastOption(),
             postUpdatePage.topicSelectLastOption(),
         ]);
 
@@ -67,8 +66,6 @@ describe('Post e2e test', () => {
         expect(await postUpdatePage.getRankThreeInput()).to.eq('5', 'Expected rankThree value to be equals to 5');
         expect(await postUpdatePage.getRankFourInput()).to.eq('5', 'Expected rankFour value to be equals to 5');
         expect(await postUpdatePage.getRankFiveInput()).to.eq('5', 'Expected rankFive value to be equals to 5');
-        expect(await postUpdatePage.getRankSixInput()).to.eq('5', 'Expected rankSix value to be equals to 5');
-        expect(await postUpdatePage.getRankSevenInput()).to.eq('5', 'Expected rankSeven value to be equals to 5');
 
         await postUpdatePage.save();
         expect(await postUpdatePage.getSaveButton().isPresent(), 'Expected save button disappear').to.be.false;
