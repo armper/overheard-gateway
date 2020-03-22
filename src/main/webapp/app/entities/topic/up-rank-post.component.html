@@ -1,0 +1,3 @@
+<span *ngFor="let rank of ranks" [class.selected]="rank === selectedRank" (click)="upRank(rank)">
+    {{rank.rankType}} {{rank.value}}
+</span>

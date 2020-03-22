@@ -112,7 +112,7 @@
                     </small>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" [hidden]="!isAdmin()">
                     <label class="form-control-label" for="field_topic">Topic</label>
                     <select class="form-control" id="field_topic" name="topic" formControlName="topic">
                         <option *ngIf="!editForm.get('topic')!.value" [ngValue]="null" selected></option>

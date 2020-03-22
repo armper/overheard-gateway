@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -15,6 +16,7 @@ import { ITopic } from 'app/shared/model/topic.model';
 import { TopicService } from 'app/entities/topic/topic.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
+import { map } from 'rxjs/operators';
 
 type SelectableEntity = IUser | ITopic;
 
@@ -26,6 +28,7 @@ export class PostUpdateComponent implements OnInit {
   isSaving = false;
   users: IUser[] = [];
   topics: ITopic[] = [];
+  state$!: Observable<any>;
 
   editForm = this.fb.group({
     id: [],
@@ -68,6 +71,12 @@ export class PostUpdateComponent implements OnInit {
     });
 
     this.accountService.getAuthenticationState().subscribe(account => (this.account = account!));
+
+    this.state$ = this.activatedRoute.paramMap.pipe(map(() => window.history.state));
+
+    this.state$.subscribe(state => {
+      this.topicService.find(state.topic.id).subscribe(findTopic => this.editForm.controls['topic'].setValue(findTopic.body));
+    });
   }
 
   updateForm(post: IPost): void {
@@ -124,7 +133,6 @@ export class PostUpdateComponent implements OnInit {
         id: this.editForm.get(['id'])!.value,
         title: this.editForm.get(['title'])!.value,
         content: this.editForm.get(['content'])!.value,
-        // date: this.editForm.get(['date'])!.value ? moment(this.editForm.get(['date'])!.value, DATE_TIME_FORMAT) : undefined,
         date: moment(new Date(), DATE_TIME_FORMAT),
         user: this.account,
         topic: this.editForm.get(['topic'])!.value,

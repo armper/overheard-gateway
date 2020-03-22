@@ -10,7 +10,6 @@ import { PostService } from '../post/post.service';
 import { IPost } from 'app/shared/model/post.model';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { JhiParseLinks } from 'ng-jhipster';
-import { UserService } from 'app/core/user/user.service';
 
 @Component({
   selector: 'jhi-topic-detail',
@@ -29,7 +28,6 @@ export class TopicDetailComponent implements OnInit {
 
   constructor(
     protected parseLinks: JhiParseLinks,
-    private userService: UserService,
     protected activatedRoute: ActivatedRoute,
     protected accountService: AccountService,
     private postService: PostService
@@ -102,80 +100,5 @@ export class TopicDetailComponent implements OnInit {
         this.posts.push(data[i]);
       }
     }
-  }
-
-  upRank(post: IPost, rank: number): void {
-    // Only logged in users can upvote
-    if (!this.account) {
-      return;
-    }
-
-    this.userService.find(this.account.login).subscribe(user => {
-      this.postService.query({ 'userUprankId.in': user.id }).subscribe(uprankedPosts => {
-        if (uprankedPosts.body!.length === 0) {
-          this.postService.find(post.id!).subscribe(pp => {
-            post.userUpranks = pp.body!.userUpranks;
-
-            switch (rank) {
-              case 1:
-                post.rankOne!++;
-                break;
-              case 2:
-                post.rankTwo!++;
-                break;
-              case 3:
-                post.rankThree!++;
-                break;
-              case 4:
-                post.rankFour!++;
-                break;
-              case 5:
-                post.rankFive!++;
-                break;
-            }
-
-            post.userUpranks!.push(user);
-            this.postService.update(post).subscribe(updatePost => {
-              updatePost.body;
-              // eslint-disable-next-line no-console
-              console.log(updatePost.body);
-            });
-          });
-        } else {
-          const urps: IPost[] = uprankedPosts.body!.filter(urp => urp.id === post.id);
-
-          if (urps.length === 0) {
-            this.postService.find(post.id!).subscribe(pp => {
-              post.userUpranks = pp.body!.userUpranks;
-
-              switch (rank) {
-                case 1:
-                  post.rankOne!++;
-                  break;
-                case 2:
-                  post.rankTwo!++;
-                  break;
-                case 3:
-                  post.rankThree!++;
-                  break;
-                case 4:
-                  post.rankFour!++;
-                  break;
-                case 5:
-                  post.rankFive!++;
-                  break;
-              }
-
-              post.userUpranks!.push(user);
-              this.postService.update(post).subscribe(updatePost => {
-                updatePost.body;
-                // eslint-disable-next-line no-console
-                console.log(updatePost.body);
-              });
-            });
-          }
-        }
-      });
-    });
   }
 }
