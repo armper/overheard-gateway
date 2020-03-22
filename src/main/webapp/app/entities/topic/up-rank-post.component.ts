@@ -12,16 +12,17 @@ import { Rank } from './rank';
   styleUrls: ['./up-rank-post.component.scss']
 })
 export class UpRankPostComponent implements OnInit, OnChanges {
-  ranks: Rank[] = [];
-
   @Input()
   post!: IPost;
+
+  ranks: Rank[] = [];
 
   selectedRank!: Rank;
 
   account!: Account;
 
   constructor(protected postService: PostService, protected userService: UserService, protected accountService: AccountService) {}
+
   ngOnChanges(changes: SimpleChanges): void {
     this.post = changes.post.currentValue;
 
@@ -47,10 +48,12 @@ export class UpRankPostComponent implements OnInit, OnChanges {
 
     this.userService.find(this.account.login).subscribe(user => {
       this.postService.query({ 'userUprankId.in': user.id }).subscribe(uprankedPostsReq => {
-        if (uprankedPostsReq.body!.length === 0) {
+        if (
+          uprankedPostsReq.body!.length === 0 ||
+          uprankedPostsReq.body!.filter(uprankedPost => uprankedPost.id === this.post.id).length === 0
+        ) {
           this.postService.find(this.post.id!).subscribe(postReq => {
             this.post = postReq.body!;
-
             switch (this.selectedRank.rankType) {
               case '👍':
                 this.post.rankOne!++;
@@ -68,43 +71,11 @@ export class UpRankPostComponent implements OnInit, OnChanges {
                 this.post.rankFive!++;
                 break;
             }
-
             this.post.userUpranks!.push(user);
             this.postService.update(this.post).subscribe(updatePost => {
-              this.post = updatePost.body!;
+              updatePost.body;
             });
           });
-        } else {
-          const uprankedPosts: IPost[] = uprankedPostsReq.body!.filter(uprankedPost => uprankedPost.id === this.post.id);
-
-          if (uprankedPosts.length === 0) {
-            this.postService.find(this.post.id!).subscribe(foundPost => {
-              this.post = foundPost.body!;
-
-              switch (this.selectedRank.rankType) {
-                case '👍':
-                  this.post.rankOne!++;
-                  break;
-                case '❤️':
-                  this.post.rankTwo!++;
-                  break;
-                case '😂':
-                  this.post.rankThree!++;
-                  break;
-                case '🤯':
-                  this.post.rankFour!++;
-                  break;
-                case '😠':
-                  this.post.rankFive!++;
-                  break;
-              }
-
-              this.post.userUpranks!.push(user);
-              this.postService.update(this.post).subscribe(updatePost => {
-                updatePost.body;
-              });
-            });
-          }
         }
       });
     });
