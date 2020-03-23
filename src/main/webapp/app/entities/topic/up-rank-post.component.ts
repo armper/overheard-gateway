@@ -21,6 +21,8 @@ export class UpRankPostComponent implements OnInit, OnChanges {
 
   account!: Account;
 
+  rankSum!: number;
+
   constructor(protected postService: PostService, protected userService: UserService, protected accountService: AccountService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -33,6 +35,10 @@ export class UpRankPostComponent implements OnInit, OnChanges {
       { rankType: '🤯', value: this.post.rankFour! },
       { rankType: '😠', value: this.post.rankFive! }
     ];
+
+    this.ranks.sort((a, b) => b.value - a.value);
+
+    this.rankSum = this.post.rankOne! + this.post.rankTwo! + this.post.rankThree! + this.post.rankFour! + this.post.rankFive!;
   }
 
   ngOnInit(): void {
@@ -73,7 +79,7 @@ export class UpRankPostComponent implements OnInit, OnChanges {
             }
             this.post.userUpranks!.push(user);
             this.postService.update(this.post).subscribe(updatePost => {
-              updatePost.body;
+              this.post = updatePost.body!;
             });
           });
         }

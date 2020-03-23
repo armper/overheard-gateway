@@ -1,3 +1,7 @@
-<span *ngFor="let rank of ranks" [class.selected]="rank === selectedRank" (click)="upRank(rank)">
-    {{rank.rankType}} {{rank.value}}
+{{rankSum}} {{ranks[0].rankType}}
+<span class="rankings">
+    <span *ngFor="let rank of ranks" [class.selected]="rank === selectedRank" (click)="upRank(rank)">
+        <span style="font-size:xx-small;position:relative; right:-17px; top:-16px">{{rank.value}} </span>
+        <span style="font-size:small">{{rank.rankType}}</span>
+    </span>
 </span>
